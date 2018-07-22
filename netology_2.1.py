@@ -25,33 +25,36 @@ def create_shop_list():
   shop_list = get_shop_list_by_dishes(dishes, person_count)
   print_shop_list(shop_list)
 
-filename = 'recipes.txt'
-DATA_PATH = (os.path.abspath(filename))
+def make_ingredients_dict(ingredient):
+	ingredients_dict = dict()
+	ingredients_dict["ingridient_name"] = ingredient[0]
+	ingredients_dict["quantity"] = int(ingredient[1])
+	ingredients_dict["measure"] = ingredient[2]
+	return ingredients_dict
 
-cook_book = dict()
-with open(DATA_PATH, "r") as f:
-	while True:
-		dish = f.readline().strip()
-		if not dish:
-			break
+def make_cook_book(data_path):
+	cook_book = dict()
+	with open(data_path, "r") as f:
+		while True:
+			dish = f.readline().strip()
+			if not dish:
+				break
 
-		count_ingredients = int(f.readline().strip())
-		ingredients_list = list()
-		while count_ingredients != 0:
-			ingredients_dict = dict()
-			ingredient = f.readline().strip().split(" | ")
-			ingredients_dict["ingridient_name"] = ingredient[0]
-			ingredients_dict["quantity"] = int(ingredient[1])
-			ingredients_dict["measure"] = ingredient[2]
-			ingredients_list.append(ingredients_dict)
-			count_ingredients -= 1
-			print(count_ingredients)
-		cook_book[dish] = ingredients_list
-		empty_line = f.readline().strip()
+			count_ingredients = int(f.readline().strip())
+			ingredients_list = list()
+			for i in range(count_ingredients):
+				ingredient = f.readline().strip().split(" | ")
+				ingredients_dict = make_ingredients_dict(ingredient)
+				ingredients_list.append(ingredients_dict)
 
+			cook_book[dish] = ingredients_list
+			empty_line = f.readline().strip()
+	return cook_book
+
+local_path = os.path.dirname(os.path.realpath(__file__))
+data_path = os.path.join(local_path, 'recipes.txt')
+
+cook_book = make_cook_book(data_path)
 pprint(cook_book)
 
-
 create_shop_list()
-
-
